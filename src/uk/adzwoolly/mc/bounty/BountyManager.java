@@ -1,5 +1,9 @@
 package uk.adzwoolly.mc.bounty;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -12,6 +16,10 @@ import static uk.adzwoolly.mc.bounty.Bounty.economy;
 public class BountyManager {
 	
 	HashMap<UUID, Integer> bounties = new HashMap<UUID, Integer>();
+	
+	public BountyManager(){
+		loadBounties();
+	}
 	
 	public int getBounty(UUID id){
 		Integer bounty = bounties.get(id);
@@ -82,5 +90,41 @@ public class BountyManager {
 	
 	public void loadBounties(){
 		
+		String fileName = "plugins/Bounty/bountyRecords.txt";
+		
+		try {
+			
+            // FileReader reads text files in the default encoding.
+            FileReader fileReader = 
+                new FileReader(fileName);
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader = 
+                new BufferedReader(fileReader);
+            
+            String line;
+            
+            while((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+                String[] bounty = line.split(",");
+                bounties.put(UUID.fromString(bounty[0]), Integer.parseInt(bounty[1]));
+                System.out.println(bounty[1]);
+            }
+            
+            // Always close files.
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                "Unable to open file '" + 
+                fileName + "'");                
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+            // Or we could just do this: 
+            // ex.printStackTrace();
+        }
 	}
 }

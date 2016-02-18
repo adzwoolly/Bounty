@@ -1,5 +1,8 @@
 package uk.adzwoolly.mc.bounty;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +16,8 @@ public class Bounty extends JavaPlugin{
 	public static double BOUNTY_MULTIPLIER;
 	private BountyManager bountyManager;
 	
+	File bountyRecords = new File("plugins/Bounty/bountyRecords.txt");
+	
 	//Fired when plugin is first enabled
 	@Override
 	public void onEnable(){
@@ -20,7 +25,7 @@ public class Bounty extends JavaPlugin{
 		getServer().getPluginManager().registerEvents(new MyListener(bountyManager), this);
 		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(bountyManager));
 		if(!setupEconomy()){
-			getLogger().severe("[Bounty] The vault integration is broken");
+			getLogger().severe("The vault integration is broken");
 		}
 		
     	FileConfiguration config = getConfig();
@@ -33,6 +38,14 @@ public class Bounty extends JavaPlugin{
     	
     	START_BOUNTY = config.getInt("startingBounty");
     	BOUNTY_MULTIPLIER = config.getDouble("bountyMultiplier");
+    	
+    	try {
+			bountyRecords.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
     
     //Fired when plugin is disabled
