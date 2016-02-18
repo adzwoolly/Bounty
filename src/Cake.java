@@ -5,6 +5,7 @@ public class Cake {
 
     public static void main(String[] args){
         new DeadCat();
+        new BrandonPlz();
         while(true){
             System.out.println("Beth Cake");
             try {
