@@ -12,15 +12,19 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
+import org.bukkit.scheduler.BukkitRunnable;
 import static uk.adzwoolly.mc.bounty.Bounty.economy;
 
-public class BountyManager {
+public class BountyManager extends BukkitRunnable{
 	
 	HashMap<UUID, Integer> bounties = new HashMap<UUID, Integer>();
+	Bounty plugin;
 	
-	public BountyManager(){
+	public BountyManager(Bounty plugin){
+		this.plugin = plugin;
 		loadBounties();
+		
+		
 	}
 	
 	public int getBounty(UUID id){
@@ -161,5 +165,12 @@ public class BountyManager {
             // Or we could just do this:
             // ex.printStackTrace();
         }
+	}
+	
+	
+	//Autosave
+	@Override
+	public void run() {
+		saveBounties();
 	}
 }
