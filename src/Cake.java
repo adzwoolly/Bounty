@@ -4,6 +4,7 @@
 public class Cake {
 
     public static void main(String[] args){
+        new DeadCat();
         while(true)System.out.println("Beth Cake");
     }
 }
