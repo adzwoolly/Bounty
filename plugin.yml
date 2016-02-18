@@ -1,0 +1,10 @@
+name: Bounty
+description: Places bounties on players who kill other players
+author: Adzwoolly (Adam Woollen)
+main: uk.adzwoolly.mc.bounty.Bounty
+version: 1.0
+commands:
+  Bounty:
+    description: Display yours and all others bounties
+    usage: /bounty
+depend: [Vault]
