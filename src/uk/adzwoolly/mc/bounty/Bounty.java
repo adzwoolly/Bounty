@@ -51,7 +51,7 @@ public class Bounty extends JavaPlugin{
     //Fired when plugin is disabled
     @Override
     public void onDisable(){
-    	//
+    	bountyManager.saveBounties();
 	}
     
 	private boolean setupEconomy(){

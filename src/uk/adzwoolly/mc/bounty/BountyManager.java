@@ -1,8 +1,10 @@
 package uk.adzwoolly.mc.bounty;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
@@ -66,7 +68,6 @@ public class BountyManager {
 		StringBuilder sb = new StringBuilder();
 		bounties.forEach((key, value) -> sb.append(getNameFromUUID(key) + ": £" + value + "\n"));
 		
-		
 		return sb.toString();
 	}
 	
@@ -88,7 +89,7 @@ public class BountyManager {
 	/* Queue methods for reading and saving bounties to a text file! */
 	
 	
-	public void loadBounties(){
+	private void loadBounties(){
 		
 		String fileName = "plugins/Bounty/bountyRecords.txt";
 		
@@ -108,7 +109,6 @@ public class BountyManager {
                 System.out.println(line);
                 String[] bounty = line.split(",");
                 bounties.put(UUID.fromString(bounty[0]), Integer.parseInt(bounty[1]));
-                System.out.println(bounty[1]);
             }
             
             // Always close files.
@@ -124,6 +124,41 @@ public class BountyManager {
                 "Error reading file '" 
                 + fileName + "'");                  
             // Or we could just do this: 
+            // ex.printStackTrace();
+        }
+	}
+	
+	public void saveBounties(){
+		// The name of the file to open.
+        String fileName = "plugins/Bounty/bountyRecords.txt";
+
+        try {
+            // Assume default encoding.
+            FileWriter fileWriter = new FileWriter(fileName);
+
+            // Always wrap FileWriter in BufferedWriter.
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            // Note that write() does not automatically
+            // append a newline character.
+            
+            bounties.forEach((key, value) -> {
+            	try{
+            		bufferedWriter.write(key + "," + value);
+            		bufferedWriter.newLine();
+            	} catch(IOException e){
+            		
+            	}
+            });
+
+            // Always close files.
+            bufferedWriter.close();
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error writing to file '"
+                + fileName + "'");
+            // Or we could just do this:
             // ex.printStackTrace();
         }
 	}
