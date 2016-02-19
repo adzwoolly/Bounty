@@ -82,11 +82,9 @@ public class BountyManager extends BukkitRunnable{
 		    return player.getName();
 		} else {
 		    Bukkit.getLogger().warning("[Bounty] BountyManager is asking for players it shouldn't!");
-		    return "ERROR!";
+		    return "Internal error!";
 		}
-	}
-	
-	
+	}	
 	
 	
 	
