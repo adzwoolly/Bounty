@@ -6,16 +6,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import uk.adzwoolly.mc.bounty.BountyManager;
-
-//import static uk.adzwoolly.mc.bounty.Bounty.economy;;
+import uk.adzwoolly.mc.bounty.Compass;
 
 public class BountyCommand implements CommandExecutor{
 	
 	BountyManager bounties;
+	Plugin plugin;
 	
-	public BountyCommand(BountyManager bounties){
+	public BountyCommand(Plugin plugin, BountyManager bounties){
+		this.plugin = plugin;
 		this.bounties = bounties;
 	}
 	
@@ -48,8 +51,11 @@ public class BountyCommand implements CommandExecutor{
 						if(sender instanceof Player){
 							if(target.isOnline()){
 								if(hunter.getInventory().contains(Material.COMPASS)){
-									hunter.setCompassTarget(target.getLocation());
+									@SuppressWarnings("unused")
+									BukkitTask task =  new Compass(hunter, target).runTaskTimer(plugin, 0, 20*60);
+									
 									hunter.sendMessage("[Bounty] Your compass now points to " + target.getName());
+									hunter.sendMessage("[Bounty] It will update every minute");
 									return true;
 								}
 							} else{
@@ -65,6 +71,7 @@ public class BountyCommand implements CommandExecutor{
 					hunter.sendMessage("[Bounty] This player currently isn't online.");
 				}
 			}
+			return true;
 		}
 		return false;
 	}

@@ -10,17 +10,20 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import static uk.adzwoolly.mc.bounty.Bounty.economy;
 
 public class BountyManager extends BukkitRunnable{
 	
-	HashMap<UUID, Integer> bounties = new HashMap<UUID, Integer>();
-	Bounty plugin;
+	HashMap<UUID, BountyData> bounties = new HashMap<UUID, BountyData>();
+	Plugin plugin;
 	
-	public BountyManager(Bounty plugin){
+	public BountyManager(Plugin plugin){
 		this.plugin = plugin;
 		loadBounties();
 		
@@ -28,9 +31,9 @@ public class BountyManager extends BukkitRunnable{
 	}
 	
 	public int getBounty(UUID id){
-		Integer bounty = bounties.get(id);
+		BountyData bounty = bounties.get(id);
 		if(bounty != null){
-			return bounty;
+			return bounty.getBountyAmount();
 		}
 		return 0;
 	}
@@ -50,14 +53,15 @@ public class BountyManager extends BukkitRunnable{
 	}
 	
 	/**
-	 * @description Increase the bounty on a player.  Starting at 10, double every time.
+	 * @description Increase the bounty on a player.  Starting at user defined amount (default 10), multiply by config amount (default 2) every time.
 	 * @param id The UUID of the player to place a bounty on.
 	 */
-	public void addBounty(UUID id){
+	public void addBounty(UUID id, Location loc){
 		if(bounties.containsKey(id)){
-			bounties.put(id, (int)(bounties.get(id) * Bounty.BOUNTY_MULTIPLIER));
+			BountyData bountyData = bounties.get(id);
+			bountyData.setBountyData((int) (bountyData.getBountyAmount() * Bounty.BOUNTY_MULTIPLIER), loc);
 		} else{
-			bounties.put(id, Bounty.START_BOUNTY);
+			bounties.put(id, new BountyData(Bounty.START_BOUNTY, loc));
 		}
 	}
 	
@@ -109,8 +113,10 @@ public class BountyManager extends BukkitRunnable{
             
             while((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
-                String[] bounty = line.split(",");
-                bounties.put(UUID.fromString(bounty[0]), Integer.parseInt(bounty[1]));
+                String[] bounty = line.split(";");
+                String[] loc = bounty[2].split(",");
+                BountyData bountyData = new BountyData(Integer.parseInt(bounty[1]), new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1]), Double.parseDouble(loc[2]), Double.parseDouble(loc[3])));
+                bounties.put(UUID.fromString(bounty[0]), bountyData);
             }
             
             // Always close files.
@@ -146,7 +152,7 @@ public class BountyManager extends BukkitRunnable{
             
             bounties.forEach((key, value) -> {
             	try{
-            		bufferedWriter.write(key + "," + value);
+            		bufferedWriter.write(key + ";" + value);
             		bufferedWriter.newLine();
             	} catch(IOException e){
             		

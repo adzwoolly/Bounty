@@ -25,7 +25,7 @@ public class MyListener implements Listener{
 				killer.sendMessage("You claim the £" + bounty + " bounty on " + dead.getDisplayName() + ".");
 				Bukkit.broadcastMessage("The bounty on " + dead.getDisplayName() + " has been claimed.");
 			} else{
-				bounties.addBounty(killer.getUniqueId());
+			//	bounties.addBounty(killer.getUniqueId());
 				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a £" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
 			}
 		}

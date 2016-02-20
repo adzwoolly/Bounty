@@ -25,7 +25,7 @@ public class Bounty extends JavaPlugin{
 	public void onEnable(){
 		bountyManager = new BountyManager(this);
 		getServer().getPluginManager().registerEvents(new MyListener(bountyManager), this);
-		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(bountyManager));
+		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
 		if(!setupEconomy()){
 			getLogger().severe("The vault integration is broken");
 		}
