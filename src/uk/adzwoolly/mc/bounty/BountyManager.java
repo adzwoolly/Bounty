@@ -152,7 +152,7 @@ public class BountyManager extends BukkitRunnable{
             
             bounties.forEach((key, value) -> {
             	try{
-            		bufferedWriter.write(key + ";" + value);
+            		bufferedWriter.write(key + ";" + value.getBountyAmount() + ";" + value.getLastKilledLoc().getWorld().getName() + "," + value.getLastKilledLoc().getX() + "," + value.getLastKilledLoc().getY() + "," + value.getLastKilledLoc().getZ());
             		bufferedWriter.newLine();
             	} catch(IOException e){
             		
@@ -176,5 +176,6 @@ public class BountyManager extends BukkitRunnable{
 	@Override
 	public void run() {
 		saveBounties();
+		Bukkit.getLogger().info("Bounties saved.");
 	}
 }
