@@ -26,8 +26,6 @@ public class BountyManager extends BukkitRunnable{
 	public BountyManager(Plugin plugin){
 		this.plugin = plugin;
 		loadBounties();
-		
-		
 	}
 	
 	public int getBounty(UUID id){
@@ -152,7 +150,7 @@ public class BountyManager extends BukkitRunnable{
             
             bounties.forEach((key, value) -> {
             	try{
-            		bufferedWriter.write(key + ";" + value.getBountyAmount() + ";" + value.getLastKilledLoc().getWorld().getName() + "," + value.getLastKilledLoc().getX() + "," + value.getLastKilledLoc().getY() + "," + value.getLastKilledLoc().getZ());
+            		bufferedWriter.write(key + ";" + value.getBountyAmount() + ";" + value.getLocation().getWorld().getName() + "," + value.getLocation().getX() + "," + value.getLocation().getY() + "," + value.getLocation().getZ());
             		bufferedWriter.newLine();
             	} catch(IOException e){
             		
@@ -170,7 +168,6 @@ public class BountyManager extends BukkitRunnable{
             // ex.printStackTrace();
         }
 	}
-	
 	
 	//Autosave
 	@Override

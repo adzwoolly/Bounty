@@ -16,7 +16,7 @@ public class BountyData {
 		return bountyAmount;
 	}
 	
-	public Location getLastKilledLoc(){
+	public Location getLocation(){
 		return lastKilledLoc;
 	}
 	

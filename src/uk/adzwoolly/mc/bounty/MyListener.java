@@ -1,9 +1,12 @@
 package uk.adzwoolly.mc.bounty;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class MyListener implements Listener{
@@ -25,9 +28,17 @@ public class MyListener implements Listener{
 				killer.sendMessage("You claim the £" + bounty + " bounty on " + dead.getDisplayName() + ".");
 				Bukkit.broadcastMessage("The bounty on " + dead.getDisplayName() + " has been claimed.");
 			} else{
-			//	bounties.addBounty(killer.getUniqueId());
+				bounties.addBounty(killer.getUniqueId(), killer.getLocation());
 				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a £" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent e){
+		if(e.getBlockPlaced().getType() == Material.TNT){
+			Player p = e.getPlayer();
+			bounties.addBounty(p.getUniqueId(), p.getLocation());
 		}
 	}
 }
