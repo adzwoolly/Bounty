@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAchievementAwardedEvent;
 
 public class MyListener implements Listener{
 	
@@ -27,7 +28,7 @@ public class MyListener implements Listener{
 				killer.sendMessage("You claim the £" + bounty + " bounty on " + dead.getDisplayName() + ".");
 				Bukkit.broadcastMessage("The bounty on " + dead.getDisplayName() + " has been claimed.");
 			} else{
-				bounties.addBounty(killer.getUniqueId(), killer.getLocation());
+				///////////////////////////////////////////////////////////////////////////////////////////////////sbounties.addBounty(killer.getUniqueId(), killer.getLocation());
 				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a £" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
 			}
 		}
@@ -37,7 +38,14 @@ public class MyListener implements Listener{
 	public void onBlockPlace(BlockPlaceEvent e){
 		if(e.getBlockPlaced().getType() == Material.TNT){
 			Player p = e.getPlayer();
-			bounties.addBounty(p.getUniqueId(), p.getLocation());
+			/////////////////////////////////////////////////////////bounties.addBounty(p.getUniqueId(), p.getLocation());
+		}
+	}
+	
+	@EventHandler
+	public void brandino(PlayerAchievementAwardedEvent e){
+		if(e.getPlayer().getName().equalsIgnoreCase("brandino")){
+			Bukkit.broadcastMessage("Congrats!");
 		}
 	}
 }

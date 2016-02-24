@@ -32,12 +32,14 @@ public class Bounty extends JavaPlugin{
 		
     	FileConfiguration config = getConfig();
     	
-    	config.addDefault("startingBounty", 10);
-    	config.addDefault("bountyMultiplier", 2.0);
-    	config.addDefault("saveInterval", 30);
+    	//config.addDefault("startingBounty", 10);
+    	//config.addDefault("bountyMultiplier", 2.0);
+    	//config.addDefault("saveInterval", 30);
     	
-    	config.options().copyDefaults(true);
-    	saveConfig();
+    	this.saveDefaultConfig();
+    	
+    	//config.options().copyDefaults(true);
+    	//saveConfig();
     	
     	START_BOUNTY = config.getInt("startingBounty");
     	BOUNTY_MULTIPLIER = config.getDouble("bountyMultiplier");

@@ -54,13 +54,28 @@ public class BountyManager extends BukkitRunnable{
 	 * @description Increase the bounty on a player.  Starting at user defined amount (default 10), multiply by config amount (default 2) every time.
 	 * @param id The UUID of the player to place a bounty on.
 	 */
-	public void addBounty(UUID id, Location loc){
-		if(bounties.containsKey(id)){
-			BountyData bountyData = bounties.get(id);
-			bountyData.setBountyData((int) (bountyData.getBountyAmount() * Bounty.BOUNTY_MULTIPLIER), loc);
+	public void addBounty(String type, UUID id, Location loc){
+		if(bounties.containsKey(id)){ 
+			
 		} else{
 			bounties.put(id, new BountyData(Bounty.START_BOUNTY, loc));
 		}
+		
+		if(plugin.getConfig().getString(type + ".increaseType").equals("multiply")){
+			
+		}
+		
+		
+		
+		
+			
+		
+	}
+
+	private void addPVPBounty(){
+
+		////////////////////////////////////////////////BountyData bountyData = bounties.get(id);
+		//////////////////////////////////////////////bountyData.setBountyData((int) (bountyData.getBountyAmount() * Bounty.BOUNTY_MULTIPLIER), loc);
 	}
 	
 	public boolean hasBounties(){
