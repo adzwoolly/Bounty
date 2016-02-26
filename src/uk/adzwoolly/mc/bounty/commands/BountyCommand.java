@@ -46,7 +46,7 @@ public class BountyCommand implements CommandExecutor{
 				if(target != null){
 					int targetBounty = bounties.getBounty(target.getUniqueId());
 					if(targetBounty != 0){
-						hunter.sendMessage(target.getName() + " has a £" + targetBounty + " on them!");
+						hunter.sendMessage("[Bounty] " + target.getName() + " has a £" + targetBounty + " on them!");
 						
 						if(sender instanceof Player){
 							if(target.isOnline()){
@@ -57,6 +57,8 @@ public class BountyCommand implements CommandExecutor{
 									hunter.sendMessage("[Bounty] Your compass now points to " + target.getName());
 									hunter.sendMessage("[Bounty] It will update every minute");
 									return true;
+								} else{
+									hunter.sendMessage("[Bounty] If run this command with a compass it will point to " + target.getName());
 								}
 							} else{
 								hunter.sendMessage("[Bounty] This player currently isn't online.");
@@ -68,7 +70,7 @@ public class BountyCommand implements CommandExecutor{
 						hunter.sendMessage("[Bounty] This player doesn't have a bounty on them.");
 					}
 				} else{
-					hunter.sendMessage("[Bounty] This player currently isn't online.");
+					hunter.sendMessage("[Bounty] Player could not be found.");
 				}
 			}
 			return true;

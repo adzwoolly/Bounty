@@ -13,9 +13,7 @@ import net.milkbowl.vault.economy.Economy;
 public class Bounty extends JavaPlugin{
 	
 	public static Economy economy = null;
-	public static int START_BOUNTY = 10;
-	public static double BOUNTY_MULTIPLIER = 2;
-	public static int SAVE_INTERVAL = 30;
+	private int saveInterval = 30;
 	private BountyManager bountyManager;
 	
 	File bountyRecords = new File("plugins/Bounty/bountyRecords.txt");
@@ -24,62 +22,60 @@ public class Bounty extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		bountyManager = new BountyManager(this);
-		getServer().getPluginManager().registerEvents(new MyListener(bountyManager), this);
+		
+		getServer().getPluginManager().registerEvents(new MyListener(this, bountyManager), this);
 		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
+		
 		if(!setupEconomy()){
 			getLogger().severe("The vault integration is broken");
 		}
 		
-    	FileConfiguration config = getConfig();
-    	
-    	//config.addDefault("startingBounty", 10);
-    	//config.addDefault("bountyMultiplier", 2.0);
-    	//config.addDefault("saveInterval", 30);
-    	
-    	this.saveDefaultConfig();
-    	
-    	//config.options().copyDefaults(true);
-    	//saveConfig();
-    	
-    	START_BOUNTY = config.getInt("startingBounty");
-    	BOUNTY_MULTIPLIER = config.getDouble("bountyMultiplier");
-    	SAVE_INTERVAL = config.getInt("saveInterval");
-    	
-    	try {
+		//If there is no config file, create a new default one
+		this.saveDefaultConfig();
+		//Load values from config
+		FileConfiguration config = getConfig();
+		saveInterval = config.getInt("saveInterval");
+		
+		//If there is no bounty save file, create a new empty one
+		try {
 			bountyRecords.createNewFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-    	if(SAVE_INTERVAL == 0){
-    		getLogger().warning("saveInterval (in config) is 0.  Bounties will NOT save automatically (only when using /stop)");
-    	} else{
-    		@SuppressWarnings("unused")
-    		BukkitTask task = bountyManager.runTaskTimer(this, 20*60*SAVE_INTERVAL, 20*60*SAVE_INTERVAL);
-    	}
-    	
+		
+		//If no save interval, warn user.  Otherwise, save on interval.
+		if(saveInterval == 0){
+			getLogger().warning("saveInterval (in config) is 0.  Bounties will NOT save automatically (only when using command 'stop')");
+		} else{
+			//Runs bountyManager.run() (saves bounty data) every saveInterval minutes
+			@SuppressWarnings("unused")
+			BukkitTask task = bountyManager.runTaskTimer(this, 20*60*saveInterval, 20*60*saveInterval);
+		}
+		
 	}
-    
-    //Fired when plugin is disabled
-    @Override
-    public void onDisable(){
-    	bountyManager.saveBounties();
+	
+	//Fired when plugin is disabled
+	@Override
+	public void onDisable(){
+		bountyManager.saveBounties();
 	}
-    
+	
 	private boolean setupEconomy(){
+		//Check if vault is on server
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
 			getLogger().severe("[Bounty] Could not find Vault!");
 			return false;
 		}
+		//Make sure there is an economy provider, such as Essentials or CraftConomy3
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		} else{
 			getLogger().severe("There is no economy plugin installed.");
 		}
-	    
+		
 		return (economy != null);
-    }
+	}
 	
 }
