@@ -46,22 +46,26 @@ public class MyListener implements Listener{
 	public void onBlockPlace(BlockPlaceEvent e){
 		if(e.getBlockPlaced().getType() == Material.TNT){
 			Player p = e.getPlayer();
+			
 			bounties.addBounty("TNT", p.getUniqueId(), p.getLocation());
 			
-			hotPlayers.put(p.getUniqueId(), System.currentTimeMillis());
-			
-			new BukkitRunnable() {
-		        @Override
-	            public void run() {
-	                // What you want to schedule goes here
-	            	if(hotPlayers.containsKey(p.getUniqueId())){
-	            		//if last block placed was longer ago than 30 seconds
-	        			if(hotPlayers.get(p.getUniqueId()) <= System.currentTimeMillis() - 1000*29.95){
-	        				Bukkit.broadcastMessage(p.getDisplayName() + " has placed TNT.  There is now a £" + bounties.getBounty(p.getUniqueId()) + " bounty on " + p.getDisplayName() + ".");
-	        			}
-	    			}
-	            }
-	        }.runTaskLater(this.plugin, 20*30);
+			//I know this doesn't seem good, as I check OP to add bounty but, I also need to not do the message as well
+			if(!p.isOp()){
+				hotPlayers.put(p.getUniqueId(), System.currentTimeMillis());
+				
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						// What you want to schedule goes here
+						if(hotPlayers.containsKey(p.getUniqueId())){
+							//if last block placed was longer ago than 30 seconds
+							if(hotPlayers.get(p.getUniqueId()) <= System.currentTimeMillis() - 1000*29.93){
+								Bukkit.broadcastMessage(p.getDisplayName() + " has placed TNT.  There is now a £" + bounties.getBounty(p.getUniqueId()) + " bounty on " + p.getDisplayName() + ".");
+							}
+						}
+					}
+				}.runTaskLater(this.plugin, 20*30);
+			}
 		}
 	}
 }

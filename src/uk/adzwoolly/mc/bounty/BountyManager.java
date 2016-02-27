@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -30,9 +29,11 @@ public class BountyManager extends BukkitRunnable{
 	}
 	
 	public int getBounty(UUID id){
-		BountyData bounty = bounties.get(id);
-		if(bounty != null){
-			return bounty.getTotalBounty();
+		if(bounties.containsKey(id)){
+			BountyData bounty = bounties.get(id);
+			if(bounty != null){
+				return bounty.getTotalBounty();
+			}
 		}
 		return 0;
 	}
@@ -43,12 +44,32 @@ public class BountyManager extends BukkitRunnable{
 	 * @param dead The player who had a bounty on them and has been killed.
 	 */
 	public void redeemBounty(Player killer, Player dead){
+		/* Old method of redeeming a bounty.  This was before admin bounties.
 		int bounty = getBounty(dead.getUniqueId());
 		if(bounty != 0){
 			economy.withdrawPlayer(dead, bounty);
 			economy.depositPlayer(killer, bounty);
 			bounties.remove(dead.getUniqueId());
-		}
+		}*/
+		
+		UUID deadID = dead.getUniqueId();
+		
+		if(bounties.containsKey(deadID)){
+			BountyData bounty = bounties.get(deadID);
+			if(bounty != null){
+				int adminBountyValue = bounty.getBounty("admin");
+				if(adminBountyValue != 0){
+					economy.depositPlayer(killer, adminBountyValue);
+				}
+				//I wanted to reuse the above in variable but, I figured using a new one would be much easier to understand
+				int normalBountyValue = bounty.getTotalBounty() - adminBountyValue;
+				if(normalBountyValue != 0){
+					economy.withdrawPlayer(dead, normalBountyValue);
+					economy.depositPlayer(killer, normalBountyValue);
+				}
+				bounties.remove(dead.getUniqueId());
+			}
+		}		
 	}
 	
 	public boolean removeBounty(UUID id){
@@ -95,7 +116,10 @@ public class BountyManager extends BukkitRunnable{
 	
 	public void addAdminBounty(UUID id, int value, Boolean saveLoc){
 		String type = "admin";
-		Location loc = Bukkit.getPlayer(id).getLocation();
+		Location loc = null;
+		if(saveLoc){
+			 loc = Bukkit.getPlayer(id).getLocation();
+		}
 		if(bounties.containsKey(id)){
 			BountyData bountyData = bounties.get(id);
 			bountyData.setBountyData(type, value, loc);
@@ -115,22 +139,10 @@ public class BountyManager extends BukkitRunnable{
 	
 	public String listBounties(){
 		StringBuilder sb = new StringBuilder();
-		bounties.forEach((key, value) -> sb.append(/*getNameFromUUID(key)*/Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
+		bounties.forEach((key, value) -> sb.append(Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
 		
 		return sb.toString();
 	}
-	
-	//I know, it doesn't really belong here...
-	private String getNameFromUUID(UUID id){
-		OfflinePlayer player = Bukkit.getOfflinePlayer(id);
-		if (player.hasPlayedBefore()) {
-			return player.getName();
-		} else {
-			Bukkit.getLogger().warning("[Bounty] BountyManager is asking for players it shouldn't!");
-			return "Internal error!";
-		}
-	}	
-	
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	

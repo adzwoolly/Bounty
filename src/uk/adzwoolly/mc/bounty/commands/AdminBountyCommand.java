@@ -25,14 +25,15 @@ public class AdminBountyCommand implements CommandExecutor{
 			if(sender.isOp()){
 				if(args.length >= 2){
 					Player p = Bukkit.getPlayer(args[0]);
-					int bounty = Integer.parseInt(args[1]);
+					int bountyValue = Integer.parseInt(args[1]);
 					if(p != null){
 						if(args.length >= 3){
-							bounties.addAdminBounty(p.getUniqueId(), bounty, Boolean.parseBoolean(args[2]));
+							bounties.addAdminBounty(p.getUniqueId(), bountyValue, Boolean.parseBoolean(args[2]));
 						} else{
-							bounties.addAdminBounty(p.getUniqueId(), bounty, null);
+							bounties.addAdminBounty(p.getUniqueId(), bountyValue, false);
 						}
 						sender.sendMessage("[Bounty] Bounty sucessfully added.");
+						Bukkit.broadcastMessage(p.getName() + " has had a £" + bountyValue + " bounty placed on them!");
 					} else{
 						sender.sendMessage("[Bounty] Players must be online to add an admin bounty.");
 					}
