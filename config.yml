@@ -1,0 +1,12 @@
+PVP:
+  enabled: true
+  startingBounty: 10
+  #'multiply' or 'add'
+  increaseType: multiply
+  increaseValue: 2
+TNT:
+  enabled: true
+  startingBounty: 500
+  #'multiply' or 'add'
+  increaseType: add
+  increaseValue: 500
