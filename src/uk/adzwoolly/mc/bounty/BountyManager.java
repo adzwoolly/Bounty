@@ -51,6 +51,13 @@ public class BountyManager extends BukkitRunnable{
 		}
 	}
 	
+	public boolean removeBounty(UUID id){
+		if(bounties.remove(id) != null){
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * @description Increase the bounty on a player.  Starting at user defined amount (default 10), multiply by config amount (default 2) every time.
 	 * @param type The type of crime committed
@@ -59,27 +66,41 @@ public class BountyManager extends BukkitRunnable{
 	 */
 	public void addBounty(String type, UUID id, Location loc){
 		
-		FileConfiguration config = plugin.getConfig();
+		if(!Bukkit.getPlayer(id).isOp()){
 		
-		if(config.getBoolean(type + ".enabled") == true){
-			if(bounties.containsKey(id)){ 
-				BountyData bountyData = bounties.get(id);
-				int value = bountyData.getBounty(type);
-				if(value != 0){
-					if(config.getString(type + ".increaseType").equalsIgnoreCase("multiply")){
-						value = (int) (value * config.getDouble(type + ".increaseValue"));
-					} else if(config.getString(type + ".increaseType").equalsIgnoreCase("add")){
-						value = (int) (value + config.getDouble(type + ".increaseValue"));
+			FileConfiguration config = plugin.getConfig();
+			
+			if(config.getBoolean(type + ".enabled") == true){
+				if(bounties.containsKey(id)){ 
+					BountyData bountyData = bounties.get(id);
+					int value = bountyData.getBounty(type);
+					if(value != 0){
+						if(config.getString(type + ".increaseType").equalsIgnoreCase("multiply")){
+							value = (int) (value * config.getDouble(type + ".increaseValue"));
+						} else if(config.getString(type + ".increaseType").equalsIgnoreCase("add")){
+							value = (int) (value + config.getDouble(type + ".increaseValue"));
+						} else{
+							plugin.getLogger().severe("The config is not set up properly, and bounties are therefore not being increased.");
+						}
+						bountyData.setBountyData(type, value, loc);
 					} else{
-						plugin.getLogger().severe("The config is not set up properly, and bounties are therefore not being increased.");
+						bountyData.setBountyData(type, config.getInt(type + ".startingBounty"), loc);
 					}
-					bountyData.setBountyData(type, value, loc);
 				} else{
-					bountyData.setBountyData(type, config.getInt(type + ".startingBounty"), loc);
+					bounties.put(id, new BountyData(type, config.getInt(type + ".startingBounty"), loc));
 				}
-			} else{
-				bounties.put(id, new BountyData(type, config.getInt(type + ".startingBounty"), loc));
 			}
+		}
+	}
+	
+	public void addAdminBounty(UUID id, int value, Boolean saveLoc){
+		String type = "admin";
+		Location loc = Bukkit.getPlayer(id).getLocation();
+		if(bounties.containsKey(id)){
+			BountyData bountyData = bounties.get(id);
+			bountyData.setBountyData(type, value, loc);
+		} else{
+			bounties.put(id, new BountyData(type, value, loc));
 		}
 	}
 	
@@ -94,7 +115,7 @@ public class BountyManager extends BukkitRunnable{
 	
 	public String listBounties(){
 		StringBuilder sb = new StringBuilder();
-		bounties.forEach((key, value) -> sb.append(getNameFromUUID(key) + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
+		bounties.forEach((key, value) -> sb.append(/*getNameFromUUID(key)*/Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
 		
 		return sb.toString();
 	}

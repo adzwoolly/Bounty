@@ -7,4 +7,10 @@ commands:
   Bounty:
     description: Display yours and all others bounties
     usage: /bounty
+  rmBounty:
+    description: Remove the specified player's bounty
+    usage: /rmbounty <playername>
+  adminbounty:
+    description:  Add an admin bounty.  Define - admin bounty - a bounty in addition to a player's standard bounty, which when claimed takes money from the server rather than the player's account.
+    usage: /adminbounty <playername> <bounty_amount> [store_player_location true/false]
 depend: [Vault]

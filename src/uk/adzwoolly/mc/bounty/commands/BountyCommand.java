@@ -26,21 +26,23 @@ public class BountyCommand implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdAlias, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("bounty")){
 			if(args.length == 0){
-					sender.sendMessage("------------------");
-					if(sender instanceof Player){
-						int senderBounty = bounties.getBounty(((Player) sender).getUniqueId());
-						sender.sendMessage("Your bounty: £" + senderBounty);
-					}
-					if(bounties.hasBounties()){
-						sender.sendMessage("\nBounties:");
-						sender.sendMessage(bounties.listBounties());
-					} else{
-						sender.sendMessage("There are no bounties right now");
-					}
-					sender.sendMessage("------------------");
-					return true;
+				
+				sender.sendMessage("------------------");
+				if(sender instanceof Player){
+					int senderBounty = bounties.getBounty(((Player) sender).getUniqueId());
+					sender.sendMessage("Your bounty: £" + senderBounty);
+				}
+				if(bounties.hasBounties()){
+					sender.sendMessage("\nBounties:");
+					sender.sendMessage(bounties.listBounties());
+				} else{
+					sender.sendMessage("There are no bounties right now");
+				}
+				sender.sendMessage("------------------");
+				return true;
 				
 			} else if(args.length == 1){
+				
 				Player hunter = (Player) sender;
 				Player target = Bukkit.getPlayer(args[0]);
 				if(target != null){
@@ -72,6 +74,7 @@ public class BountyCommand implements CommandExecutor{
 				} else{
 					hunter.sendMessage("[Bounty] Player could not be found.");
 				}
+				
 			}
 			return true;
 		}

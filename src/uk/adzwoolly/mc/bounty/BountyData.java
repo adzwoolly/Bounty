@@ -35,7 +35,9 @@ public class BountyData {
 	
 	public void setBountyData(String type, int value, Location loc){
 		values.put(type, value);
-		lastCrimeLocation = loc;
+		if(loc != null){
+			lastCrimeLocation = loc;
+		}
 	}
 	
 	protected String getSaveData(){
