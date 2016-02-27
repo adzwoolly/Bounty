@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -17,7 +18,8 @@ public class MyListener implements Listener{
 	
 	Plugin plugin;
 	BountyManager bounties;
-	
+
+
 	public MyListener(Plugin plugin, BountyManager bountyManager){
 		this.plugin = plugin;
 		bounties = bountyManager;
@@ -31,11 +33,11 @@ public class MyListener implements Listener{
 			int bounty = bounties.getBounty(e.getEntity().getUniqueId());
 			if(bounty != 0){
 				bounties.redeemBounty(killer, dead);
-				killer.sendMessage("You claim the £" + bounty + " bounty on " + dead.getDisplayName() + ".");
+				killer.sendMessage("You claim the ï¿½" + bounty + " bounty on " + dead.getDisplayName() + ".");
 				Bukkit.broadcastMessage("The bounty on " + dead.getDisplayName() + " has been claimed.");
 			} else{
 				bounties.addBounty("PVP", killer.getUniqueId(), killer.getLocation());
-				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a £" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
+				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a ï¿½" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
 			}
 		}
 	}
@@ -57,11 +59,39 @@ public class MyListener implements Listener{
 	            	if(hotPlayers.containsKey(p.getUniqueId())){
 	            		//if last block placed was longer ago than 30 seconds
 	        			if(hotPlayers.get(p.getUniqueId()) <= System.currentTimeMillis() - 1000*29.95){
-	        				Bukkit.broadcastMessage(p.getDisplayName() + " has placed TNT.  There is now a £" + bounties.getBounty(p.getUniqueId()) + " bounty on " + p.getDisplayName() + ".");
+	        				Bukkit.broadcastMessage(p.getDisplayName() + " has placed TNT.  There is now a ï¿½" + bounties.getBounty(p.getUniqueId()) + " bounty on " + p.getDisplayName() + ".");
 	        			}
 	    			}
 	            }
 	        }.runTaskLater(this.plugin, 20*30);
 		}
 	}
+
+	@EventHandler
+	public void interruptCommand(PlayerCommandPreprocessEvent e){
+		String command = e.getMessage();
+		Player player = e.getPlayer();
+
+		switch (command){
+			case "spawn":
+				player.sendMessage("Only good boys and girls get to teleport here :3");
+				e.setCancelled(true);
+				break;
+			case "home":
+				player.sendMessage("You coward! You will be delayed from escaping your fate >:D");
+				e.setCancelled(true);
+				break;
+		}
+	}
+
+	private class InterruptedCommand{
+
+		public InterruptedCommand(PlayerCommandPreprocessEvent e){
+
+		}
+	}
+
+
+
+
 }
