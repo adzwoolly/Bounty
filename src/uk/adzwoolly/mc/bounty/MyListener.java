@@ -83,7 +83,7 @@ public class MyListener implements Listener{
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "OOPS!" + ChatColor.RESET + ChatColor.ITALIC +  "Only good boys and girls get to teleport here :3");
+						player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "OOPS!   " + ChatColor.RESET + ChatColor.ITALIC +  "Only good boys and girls get to teleport here :3");
 					}
 				}.runTaskLater(plugin, 20);
 
