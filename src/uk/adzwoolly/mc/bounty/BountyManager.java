@@ -139,7 +139,7 @@ public class BountyManager extends BukkitRunnable{
 	
 	public String listBounties(){
 		StringBuilder sb = new StringBuilder();
-		bounties.forEach((key, value) -> sb.append(Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
+		bounties.forEach((key, value) -> sb.append(Bukkit.getOfflinePlayer(key).getName() + ": Â£" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
 		
 		return sb.toString();
 	}
