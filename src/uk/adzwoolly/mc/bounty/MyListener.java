@@ -82,7 +82,7 @@ public class MyListener implements Listener{
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						player.sendMessage("OOPS!,Only good boys and girls get to teleport here :3");
+						player.sendMessage("&4&lOOPS!   &r&oOnly good boys and girls get to teleport here :3");
 					}
 				}.runTaskLater(plugin, 20);
 
