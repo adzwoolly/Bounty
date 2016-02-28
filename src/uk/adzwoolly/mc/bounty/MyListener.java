@@ -68,30 +68,11 @@ public class MyListener implements Listener{
 	}
 
 	@EventHandler
-	public void interruptCommand(PlayerCommandPreprocessEvent e){
+	public void interruptCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();
-		Player player = e.getPlayer();
-
-		switch (command){
-			case "spawn":
-				player.sendMessage("Only good boys and girls get to teleport here :3");
-				e.setCancelled(true);
-				break;
-			case "home":
-				player.sendMessage("You coward! You will be delayed from escaping your fate >:D");
-				e.setCancelled(true);
-				break;
+		if (command.equalsIgnoreCase("spawn")){
+			e.getPlayer().sendMessage("Only good boys and girls get to teleport here :3");
+			e.setCancelled(true);
 		}
 	}
-
-	private class InterruptedCommand{
-
-		public InterruptedCommand(PlayerCommandPreprocessEvent e){
-
-		}
-	}
-
-
-
-
 }
