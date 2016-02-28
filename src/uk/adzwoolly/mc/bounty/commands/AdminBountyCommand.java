@@ -30,7 +30,7 @@ public class AdminBountyCommand implements CommandExecutor{
 						if(args.length >= 3){
 							bounties.addAdminBounty(p.getUniqueId(), bounty, Boolean.parseBoolean(args[2]));
 						} else{
-							bounties.addAdminBounty(p.getUniqueId(), bounty, null);
+							bounties.addAdminBounty(p.getUniqueId(), bounty, false);
 						}
 						sender.sendMessage("[Bounty] Bounty sucessfully added.");
 					} else{
