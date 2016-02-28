@@ -74,9 +74,12 @@ public class MyListener implements Listener{
 	@EventHandler
 	public void interruptCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();
-		if (command.equalsIgnoreCase("spawn")){
-			e.getPlayer().sendMessage("Only good boys and girls get to teleport here :3");
-			e.setCancelled(true);
+		Player player = e.getPlayer();
+		if(bounties.getBounty(player.getUniqueId()) != 0) {
+			if (command.equalsIgnoreCase("spawn")) {
+				e.setCancelled(true);
+				player.sendMessage("Only good boys and girls get to teleport here :3");
+			}
 		}
 	}
 }
