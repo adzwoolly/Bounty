@@ -30,7 +30,7 @@ public class BountyCommand implements CommandExecutor{
 				sender.sendMessage("------------------");
 				if(sender instanceof Player){
 					int senderBounty = bounties.getBounty(((Player) sender).getUniqueId());
-					sender.sendMessage("Your bounty: £" + senderBounty);
+					sender.sendMessage("Your bounty: Â£" + senderBounty);
 				}
 				if(bounties.hasBounties()){
 					sender.sendMessage("\nBounties:");
@@ -48,7 +48,7 @@ public class BountyCommand implements CommandExecutor{
 				if(target != null){
 					int targetBounty = bounties.getBounty(target.getUniqueId());
 					if(targetBounty != 0){
-						hunter.sendMessage("[Bounty] " + target.getName() + " has a £" + targetBounty + " on them!");
+						hunter.sendMessage("[Bounty] " + target.getName() + " has a ï¿½" + targetBounty + " on them!");
 						
 						if(sender instanceof Player){
 							if(target.isOnline()){
