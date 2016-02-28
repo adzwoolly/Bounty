@@ -5,7 +5,7 @@ main: uk.adzwoolly.mc.bounty.Bounty
 version: 1.0
 commands:
   Bounty:
-    description: Display yours and all others bounties
+    description: Display yours and all others' bounties
     usage: /bounty
   rmBounty:
     description: Remove the specified player's bounty
