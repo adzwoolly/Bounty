@@ -70,7 +70,7 @@ public class MyListener implements Listener{
 			}
 		}
 	}
-
+	
 	@EventHandler
 	public void interruptCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();
