@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,7 +83,7 @@ public class MyListener implements Listener{
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						player.sendMessage("&4&lOOPS!   &r&oOnly good boys and girls get to teleport here :3");
+						player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "OOPS!" + ChatColor.RESET + ChatColor.ITALIC +  "Only good boys and girls get to teleport here :3");
 					}
 				}.runTaskLater(plugin, 20);
 
