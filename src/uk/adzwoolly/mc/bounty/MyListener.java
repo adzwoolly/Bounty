@@ -79,7 +79,13 @@ public class MyListener implements Listener{
 		if (command.equalsIgnoreCase("/spawn")) {
 			if(bounties.getBounty(player.getUniqueId()) != 0) {
 				e.setCancelled(true);
-				player.sendMessage("Only good boys and girls get to teleport here :3");
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						player.sendMessage("OOPS!,Only good boys and girls get to teleport here :3");
+					}
+				}.runTaskLater(plugin, 20);
+
 			}
 		}
 	}
