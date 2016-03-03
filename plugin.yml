@@ -5,8 +5,8 @@ main: uk.adzwoolly.mc.bounty.Bounty
 version: 1.0
 commands:
   Bounty:
-    description: Display yours and all others' bounties
-    usage: /bounty
+    description: Display yours and all others' bounties.  If you have a compass, it will point to the specified player.
+    usage: /bounty [playername]
   rmBounty:
     description: Remove the specified player's bounty
     usage: /rmbounty <playername>

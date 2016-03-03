@@ -15,11 +15,16 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * 
+ * @author Adzwoolly (Adam Woollen)
+ * @author Aaron Tello-Wharton
+ *
+ */
 public class MyListener implements Listener{
 	
 	Plugin plugin;
 	BountyManager bounties;
-
 
 	public MyListener(Plugin plugin, BountyManager bountyManager){
 		this.plugin = plugin;
@@ -34,11 +39,11 @@ public class MyListener implements Listener{
 			int bounty = bounties.getBounty(e.getEntity().getUniqueId());
 			if(bounty != 0){
 				bounties.redeemBounty(killer, dead);
-				killer.sendMessage("You claim the �" + bounty + " bounty on " + dead.getDisplayName() + ".");
-				Bukkit.broadcastMessage("The bounty on " + dead.getDisplayName() + " has been claimed.");
+				killer.sendMessage(Bounty.msgPrefix + "You claim the £" + bounty + " bounty on " + dead.getDisplayName() + ".");
+				Bukkit.broadcastMessage(Bounty.msgPrefix + "The bounty on " + dead.getDisplayName() + " has been claimed.");
 			} else{
 				bounties.addBounty("PVP", killer.getUniqueId(), killer.getLocation());
-				Bukkit.broadcastMessage(killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a �" + bounties.getBounty(killer.getUniqueId()) + " bounty on " + killer.getDisplayName() + ".");
+				Bukkit.broadcastMessage(Bounty.msgPrefix + killer.getDisplayName() + " murdered " + dead.getDisplayName() + ".  There is now a " + ChatColor.DARK_RED + "£" + bounties.getBounty(killer.getUniqueId()) + ChatColor.RESET + " bounty on " + ChatColor.DARK_RED + killer.getDisplayName() + ChatColor.RESET + ".");
 			}
 		}
 	}
@@ -49,11 +54,14 @@ public class MyListener implements Listener{
 	public void onBlockPlace(BlockPlaceEvent e){
 		if(e.getBlockPlaced().getType() == Material.TNT){
 			Player p = e.getPlayer();
-
+			
+			//This method checks to see if a player can get a bounty
 			bounties.addBounty("TNT", p.getUniqueId(), p.getLocation());
 			
 			//I know this doesn't seem good, as I check OP to add bounty but, I also need to not do the message as well
-			if(!p.isOp()){
+			if(bounties.canGetBounty(p.getUniqueId())){
+				p.sendMessage(Bounty.msgPrefix + "Placing TNT gives you a bounty!  You now have a bounty of £" + bounties.getBounty(p.getUniqueId()));
+				
 				hotPlayers.put(p.getUniqueId(), System.currentTimeMillis());
 
 				new BukkitRunnable() {
@@ -63,7 +71,7 @@ public class MyListener implements Listener{
 						if(hotPlayers.containsKey(p.getUniqueId())){
 							//if last block placed was longer ago than 30 seconds
 							if(hotPlayers.get(p.getUniqueId()) <= System.currentTimeMillis() - 1000*29.93){
-								Bukkit.broadcastMessage(p.getDisplayName() + " has placed TNT.  There is now a �" + bounties.getBounty(p.getUniqueId()) + " bounty on " + p.getDisplayName() + ".");
+								Bukkit.broadcastMessage(Bounty.msgPrefix + p.getDisplayName() + " has placed TNT.  There is now a " + ChatColor.DARK_RED + "£" + bounties.getBounty(p.getUniqueId()) + ChatColor.RESET + " bounty on " + ChatColor.DARK_RED + p.getDisplayName() + ChatColor.RESET + ".");
 							}
 						}
 					}
@@ -72,6 +80,11 @@ public class MyListener implements Listener{
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Aaron Tello-Wharton
+	 * @param e
+	 */
 	@EventHandler
 	public void interruptCommand(PlayerCommandPreprocessEvent e) {
 		String command = e.getMessage();

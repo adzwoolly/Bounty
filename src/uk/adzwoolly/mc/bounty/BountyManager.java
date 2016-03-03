@@ -18,10 +18,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static uk.adzwoolly.mc.bounty.Bounty.economy;
 
+/**
+ * A class to store and manage bounties on players
+ * @author Adzwoolly (Adam Woollen)
+ *
+ */
 public class BountyManager extends BukkitRunnable{
 	
-	HashMap<UUID, BountyData> bounties = new HashMap<UUID, BountyData>();
 	Plugin plugin;
+	HashMap<UUID, BountyData> bounties = new HashMap<UUID, BountyData>();
+	//FileInterface fileInterface = new FileInterface();
 	
 	public BountyManager(Plugin plugin){
 		this.plugin = plugin;
@@ -39,36 +45,24 @@ public class BountyManager extends BukkitRunnable{
 	}
 	
 	/**
-	 * @description Remove the bounty amount from the dead's account and deposit it in the killer's account.  Remove the bounty off the dead's head.
+	 * Remove the bounty amount from the dead's account and deposit it in the killer's account.  Remove the bounty off the dead's head.
 	 * @param killer The player who killed, and should receive the bounty.
 	 * @param dead The player who had a bounty on them and has been killed.
 	 */
 	public void redeemBounty(Player killer, Player dead){
-		/* Old method of redeeming a bounty.  This was before admin bounties.
-		int bounty = getBounty(dead.getUniqueId());
-		if(bounty != 0){
-			economy.withdrawPlayer(dead, bounty);
-			economy.depositPlayer(killer, bounty);
-			bounties.remove(dead.getUniqueId());
-		}*/
-		
 		UUID deadID = dead.getUniqueId();
 		
 		if(bounties.containsKey(deadID)){
 			BountyData bounty = bounties.get(deadID);
 			if(bounty != null){
-				int adminBountyValue = bounty.getBounty("admin");
+				int adminBountyValue = bounty.getBountyOfType("admin");
 				if(adminBountyValue != 0){
-					Bukkit.broadcastMessage("Oh, wait.  I shouldn't be here...");
 					economy.depositPlayer(killer, adminBountyValue);
 				}
 				//I wanted to reuse the above in variable but, I figured using a new one would be much easier to understand
 				int normalBountyValue = bounty.getTotalBounty() - adminBountyValue;
 				if(normalBountyValue != 0){
-					Bukkit.broadcastMessage("Trying to take a normal (non-admin) bounty of £" + normalBountyValue);
-					if(economy.withdrawPlayer(dead, normalBountyValue).transactionSuccess()){
-						Bukkit.broadcastMessage("Transaction successful!");
-					}
+					economy.withdrawPlayer(dead, normalBountyValue);
 					economy.depositPlayer(killer, normalBountyValue);
 				}
 				bounties.remove(dead.getUniqueId());
@@ -84,21 +78,19 @@ public class BountyManager extends BukkitRunnable{
 	}
 	
 	/**
-	 * @description Increase the bounty on a player.  Starting at user defined amount (default 10), multiply by config amount (default 2) every time.
+	 * Increase the bounty on a player.  The amount increased is dependent on the type of bounty and how it is configured in the "config.yml" file.
 	 * @param type The type of crime committed
 	 * @param id The UUID of the player to place a bounty on.
 	 * @param loc The location the crime was committed
 	 */
 	public void addBounty(String type, UUID id, Location loc){
+		FileConfiguration config = plugin.getConfig();
 		
-		if(!Bukkit.getPlayer(id).isOp()){
-		
-			FileConfiguration config = plugin.getConfig();
-			
+		if(canGetBounty(id)){
 			if(config.getBoolean(type + ".enabled") == true){
 				if(bounties.containsKey(id)){ 
 					BountyData bountyData = bounties.get(id);
-					int value = bountyData.getBounty(type);
+					int value = bountyData.getBountyOfType(type);
 					if(value != 0){
 						if(config.getString(type + ".increaseType").equalsIgnoreCase("multiply")){
 							value = (int) (value * config.getDouble(type + ".increaseValue"));
@@ -118,7 +110,13 @@ public class BountyManager extends BukkitRunnable{
 		}
 	}
 	
-	public void addAdminBounty(UUID id, int value, Boolean saveLoc){
+	/**
+	 * Sets the admin bounty on a given player
+	 * @param id The UUID of the player we're putting the bounty on.
+	 * @param value The size of the bounty to be placed on them.
+	 * @param saveLoc Whether the player's location should be saved with the bounty.
+	 */
+	public void setAdminBounty(UUID id, int value, Boolean saveLoc){
 		String type = "admin";
 		Location loc = null;
 		if(saveLoc){
@@ -134,6 +132,13 @@ public class BountyManager extends BukkitRunnable{
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	public boolean canGetBounty(UUID id){
+		if(plugin.getConfig().getBoolean("opsGetBounties") || !Bukkit.getPlayer(id).isOp()){
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean hasBounties(){
 		if(bounties.isEmpty()){
 			return false;
@@ -141,10 +146,9 @@ public class BountyManager extends BukkitRunnable{
 		return true;
 	}
 	
-	public String listBounties(){
+	public String listBountiesAsString(){
 		StringBuilder sb = new StringBuilder();
 		bounties.forEach((key, value) -> sb.append(Bukkit.getOfflinePlayer(key).getName() + ": Â£" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
-		
 		return sb.toString();
 	}
 	
@@ -154,88 +158,11 @@ public class BountyManager extends BukkitRunnable{
 	
 	
 	private void loadBounties(){
-		
-		String fileName = "plugins/Bounty/bountyRecords.txt";
-		
-		try {
-			
-			// FileReader reads text files in the default encoding.
-			FileReader fileReader = 
-			new FileReader(fileName);
-
-			// Always wrap FileReader in BufferedReader.
-			BufferedReader bufferedReader = 
-			new BufferedReader(fileReader);
-			
-			String line;
-			
-			while((line = bufferedReader.readLine()) != null) {
-				//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
-				//saveData {UUID	type,value	type,value	locWorld,locX,locY,locZ}
-				String[] saveData = line.split(";");
-				//bounty {type	value}
-				String[] bounty = saveData[1].split(",");
-				//loc {locWorld		locX	locY	locZ}
-				String[] loc = saveData[saveData.length - 1].split(",");
-				Location location = new Location(Bukkit.getWorld(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3]));
-				//Create a BountyData object
-				BountyData bountyData = new BountyData(bounty[0],Integer.parseInt(bounty[1]), location);
-				if(saveData.length > 3){
-					for(int i = 2; i < saveData.length - 1; i++){
-						bounty = saveData[i].split(",");
-						bountyData.setBountyData(bounty[0], Integer.parseInt(bounty[1]), location);
-					}
-				}
-				bounties.put(UUID.fromString(saveData[0]), bountyData);
-			}
-			
-			// Always close files.
-			bufferedReader.close();
-		}
-		catch(FileNotFoundException ex) {
-			System.out.println("Unable to open file '" + fileName + "'");
-		}
-		catch(IOException ex) {
-			System.out.println("Error reading file '" + fileName + "'");
-			// Or we could just do this: 
-			// ex.printStackTrace();
-		}
+		FileInterface.loadBounties(bounties);
 	}
 	
 	public void saveBounties(){
-		// The name of the file to open.
-		String fileName = "plugins/Bounty/bountyRecords.txt";
-		
-		try {
-			// Assume default encoding.
-			FileWriter fileWriter = new FileWriter(fileName);
-			
-			// Always wrap FileWriter in BufferedWriter.
-			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-			
-			// Note that write() does not automatically
-			// append a newline character.
-			
-			bounties.forEach((key, value) -> {
-				try{
-					//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
-					Location loc = value.getLocation();
-					String locString = loc.getWorld().getName() + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
-					bufferedWriter.write(key + ";" + value.getSaveData() + ";" + locString);
-					bufferedWriter.newLine();
-				} catch(IOException e){
-					
-				}
-			});
-			
-			// Always close files.
-			bufferedWriter.close();
-		}
-		catch(IOException ex) {
-			System.out.println("Error writing to file '" + fileName + "'");
-			// Or we could just do this:
-			// ex.printStackTrace();
-		}
+		FileInterface.saveBounties(bounties);
 	}
 	
 	//Autosave
@@ -244,4 +171,108 @@ public class BountyManager extends BukkitRunnable{
 		saveBounties();
 		Bukkit.getLogger().info("Bounties saved.");
 	}
+	
+	private abstract static class FileInterface {
+		
+		private static int getIntFromString(String text){
+			try{
+				return Integer.parseInt(text);
+			} catch(NumberFormatException e){
+				return 0;
+			}
+		}
+		
+		protected static void loadBounties(HashMap<UUID, BountyData> bounties){
+			
+			String fileName = "plugins/Bounty/bountyRecords.txt";
+			
+			try {
+				// FileReader reads text files in the default encoding.
+				FileReader fileReader = 
+				new FileReader(fileName);
+
+				// Always wrap FileReader in BufferedReader.
+				BufferedReader bufferedReader = 
+				new BufferedReader(fileReader);
+				
+				String line;
+				
+				while((line = bufferedReader.readLine()) != null) {
+					//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
+					//saveData {UUID	type,value	type,value	locWorld,locX,locY,locZ}
+					String[] saveData = line.split(";");
+					//bounty {type	value}
+					String[] bounty = saveData[1].split(",");
+					//loc {locWorld		locX	locY	locZ}
+					String[] loc = saveData[saveData.length - 1].split(",");
+					
+					try{
+						
+					} catch(NumberFormatException e){
+						
+					}
+					
+					
+					Location location = new Location(Bukkit.getWorld(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3]));
+					//Create a BountyData object
+					BountyData bountyData = new BountyData(bounty[0],Integer.parseInt(bounty[1]), location);
+					if(saveData.length > 3){
+						for(int i = 2; i < saveData.length - 1; i++){
+							bounty = saveData[i].split(",");
+							bountyData.setBountyData(bounty[0], Integer.parseInt(bounty[1]), location);
+						}
+					}
+					bounties.put(UUID.fromString(saveData[0]), bountyData);
+				}
+				
+				// Always close files.
+				bufferedReader.close();
+			}
+			catch(FileNotFoundException ex) {
+				System.out.println("Unable to open file '" + fileName + "'");
+			}
+			catch(IOException ex) {
+				System.out.println("Error reading file '" + fileName + "'");
+				// Or we could just do this: 
+				// ex.printStackTrace();
+			}
+		}
+		
+		protected static void saveBounties(HashMap<UUID, BountyData> bounties){
+			// The name of the file to open.
+			String fileName = "plugins/Bounty/bountyRecords.txt";
+			
+			try {
+				// Assume default encoding.
+				FileWriter fileWriter = new FileWriter(fileName);
+				
+				// Always wrap FileWriter in BufferedWriter.
+				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+				
+				// Note that write() does not automatically
+				// append a newline character.
+				
+				bounties.forEach((key, value) -> {
+					try{
+						//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
+						Location loc = value.getLocation();
+						String locString = loc.getWorld().getName() + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
+						bufferedWriter.write(key + ";" + value.getSaveData() + ";" + locString);
+						bufferedWriter.newLine();
+					} catch(IOException e){
+						
+					}
+				});
+				
+				// Always close files.
+				bufferedWriter.close();
+			}
+			catch(IOException ex) {
+				System.out.println("Error writing to file '" + fileName + "'");
+				// Or we could just do this:
+				// ex.printStackTrace();
+			}
+		}
+	}
+	
 }

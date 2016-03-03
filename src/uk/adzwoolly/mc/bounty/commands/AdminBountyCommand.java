@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import uk.adzwoolly.mc.bounty.Bounty;
 import uk.adzwoolly.mc.bounty.BountyManager;
 
 public class AdminBountyCommand implements CommandExecutor{
@@ -25,21 +26,26 @@ public class AdminBountyCommand implements CommandExecutor{
 			if(sender.isOp()){
 				if(args.length >= 2){
 					Player p = Bukkit.getPlayer(args[0]);
-					int bounty = Integer.parseInt(args[1]);
+					int bounty;
+					try{
+						bounty = Integer.parseInt(args[1]);
+					} catch(NumberFormatException e){
+						return false;
+					}
 					if(p != null){
 						if(args.length >= 3){
-							bounties.addAdminBounty(p.getUniqueId(), bounty, Boolean.parseBoolean(args[2]));
+							bounties.setAdminBounty(p.getUniqueId(), bounty, Boolean.parseBoolean(args[2]));
 						} else{
-							bounties.addAdminBounty(p.getUniqueId(), bounty, false);
+							bounties.setAdminBounty(p.getUniqueId(), bounty, false);
 						}
-						sender.sendMessage("[Bounty] Bounty sucessfully added.");
+						sender.sendMessage(Bounty.msgPrefix + "Bounty sucessfully added.");
 					} else{
-						sender.sendMessage("[Bounty] Players must be online to add an admin bounty.");
+						sender.sendMessage(Bounty.msgPrefix + "This player is not recognised on the server.");
 					}
 					return true;
 				}
 			} else{
-				sender.sendMessage("[Bounty] You do not have the required permissions to run this command.");
+				sender.sendMessage(Bounty.msgPrefix + "You do not have the required permissions to run this command.");
 			}
 		}
 		return false;

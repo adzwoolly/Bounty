@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import uk.adzwoolly.mc.bounty.Bounty;
 import uk.adzwoolly.mc.bounty.BountyManager;
 import uk.adzwoolly.mc.bounty.Compass;
 
@@ -34,7 +35,7 @@ public class BountyCommand implements CommandExecutor{
 				}
 				if(bounties.hasBounties()){
 					sender.sendMessage("\nBounties:");
-					sender.sendMessage(bounties.listBounties());
+					sender.sendMessage(bounties.listBountiesAsString());
 				} else{
 					sender.sendMessage("There are no bounties right now");
 				}
@@ -48,7 +49,7 @@ public class BountyCommand implements CommandExecutor{
 				if(target != null){
 					int targetBounty = bounties.getBounty(target.getUniqueId());
 					if(targetBounty != 0){
-						hunter.sendMessage("[Bounty] " + target.getName() + " has a �" + targetBounty + " on them!");
+						hunter.sendMessage(Bounty.msgPrefix + target.getName() + " has a £" + targetBounty + " on them!");
 						
 						if(sender instanceof Player){
 							if(target.isOnline()){
@@ -56,23 +57,23 @@ public class BountyCommand implements CommandExecutor{
 									@SuppressWarnings("unused")
 									BukkitTask task =  new Compass(hunter, target).runTaskTimer(plugin, 0, 20*60);
 									
-									hunter.sendMessage("[Bounty] Your compass now points to " + target.getName());
-									hunter.sendMessage("[Bounty] It will update every minute");
+									hunter.sendMessage(Bounty.msgPrefix + "Your compass now points to " + target.getName());
+									hunter.sendMessage(Bounty.msgPrefix + "It will update every minute");
 									return true;
 								} else{
-									hunter.sendMessage("[Bounty] If run this command with a compass it will point to " + target.getName());
+									hunter.sendMessage(Bounty.msgPrefix + "If run this command with a compass it will point to " + target.getName());
 								}
 							} else{
-								hunter.sendMessage("[Bounty] This player currently isn't online.");
+								hunter.sendMessage(Bounty.msgPrefix + "This player currently isn't online.");
 							}
 						} else{
-							sender.sendMessage("[Bounty] Running this command as a player points a compass to the target, too");
+							sender.sendMessage(Bounty.msgPrefix + "Running this command as a player points a compass to the target, too");
 						}
 					} else{
-						hunter.sendMessage("[Bounty] This player doesn't have a bounty on them.");
+						hunter.sendMessage(Bounty.msgPrefix + "This player doesn't have a bounty on them.");
 					}
 				} else{
-					hunter.sendMessage("[Bounty] Player could not be found.");
+					hunter.sendMessage(Bounty.msgPrefix + "Player could not be found.");
 				}
 				
 			}

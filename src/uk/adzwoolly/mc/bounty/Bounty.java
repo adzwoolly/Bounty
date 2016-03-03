@@ -8,11 +8,13 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
 public class Bounty extends JavaPlugin{
 	
 	public static Economy economy = null;
+	public static final String msgPrefix = ChatColor.DARK_AQUA + "[Bounty] " + ChatColor.RESET;
 	private int saveInterval = 30;
 	private BountyManager bountyManager;
 	
@@ -23,11 +25,11 @@ public class Bounty extends JavaPlugin{
 	public void onEnable(){
 		bountyManager = new BountyManager(this);
 		
+		//register listener and commands
 		getServer().getPluginManager().registerEvents(new MyListener(this, bountyManager), this);
-		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
-		getCommand("rmbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.RMBountyCommand(this, bountyManager));
-		getCommand("adminbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.AdminBountyCommand(this, bountyManager));
+		registerCommands();
 		
+		//Setup economy with Vault
 		if(!setupEconomy()){
 			getLogger().severe("The vault integration is broken");
 		}
@@ -50,7 +52,7 @@ public class Bounty extends JavaPlugin{
 		if(saveInterval == 0){
 			getLogger().warning("saveInterval (in config) is 0.  Bounties will NOT save automatically (only when using command 'stop')");
 		} else{
-			//Runs bountyManager.run() (saves bounty data) every saveInterval minutes
+			//Runs bountyManager.run() (saves bounty data) every 'saveInterval' minutes
 			@SuppressWarnings("unused")
 			BukkitTask task = bountyManager.runTaskTimer(this, 20*60*saveInterval, 20*60*saveInterval);
 		}
@@ -63,6 +65,21 @@ public class Bounty extends JavaPlugin{
 		bountyManager.saveBounties();
 	}
 	
+	/**
+	 * Method - Tells Bukkit what classes should be used to execute commands
+	 * @author Adzwoolly (Adam Woollen)
+	 */
+	private void registerCommands(){
+		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
+		getCommand("rmbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.RMBountyCommand(this, bountyManager));
+		getCommand("adminbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.AdminBountyCommand(this, bountyManager));
+	}
+	
+	/**
+	 * Checks if Vault is enabled on the server and that there is an economy plugin installed.  Saves the economy to field "economy".
+	 * @author Adzwoolly (Adam Woollen)
+	 * @return Whether the economy was successfully set up.
+	 */
 	private boolean setupEconomy(){
 		//Check if vault is on server
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {

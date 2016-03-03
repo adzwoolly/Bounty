@@ -1,13 +1,13 @@
 package uk.adzwoolly.mc.bounty.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import uk.adzwoolly.mc.bounty.Bounty;
 import uk.adzwoolly.mc.bounty.BountyManager;
 
 public class RMBountyCommand implements CommandExecutor{
@@ -28,24 +28,18 @@ public class RMBountyCommand implements CommandExecutor{
 					Player p = Bukkit.getPlayer(args[0]);
 					if(p != null){
 						if(bounties.removeBounty(p.getUniqueId())){
-							sender.sendMessage("[Bounty] Bounty successfully removed.");
+							sender.sendMessage(Bounty.msgPrefix + "Bounty successfully removed.");
 						} else{
-							sender.sendMessage("[Bounty] Did not remove a bounty. Did you type the name correctly? Does the player have a bounty?");
+							sender.sendMessage(Bounty.msgPrefix + "Did not remove a bounty. Does the player have a bounty?");
 						}
 					} else{
-						@SuppressWarnings("deprecation")
-						OfflinePlayer p2 = Bukkit.getOfflinePlayer(args[0]);
-						if(bounties.removeBounty(p2.getUniqueId())){
-							sender.sendMessage("[Bounty] Bounty successfully removed.");
-						} else{
-							sender.sendMessage("[Bounty] Did not remove a bounty. Did you type the name correctly? Does the player have a bounty?");
-						}
+						sender.sendMessage(Bounty.msgPrefix + "Did not remove a bounty. Did you type the name correctly?");
 					}
 				} else{
 					return false;
 				}
 			} else{
-				sender.sendMessage("[Bounty] You do not have the required permissions to run this command.");
+				sender.sendMessage(Bounty.msgPrefix + "You do not have the required permissions to run this command.");
 			}
 			return true;
 		}

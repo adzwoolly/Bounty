@@ -22,7 +22,7 @@ public class BountyData {
 		return totalBounty;
 	}
 	
-	public int getBounty(String type){
+	public int getBountyOfType(String type){
 		if(values.containsKey(type)){
 			return values.get(type);
 		}

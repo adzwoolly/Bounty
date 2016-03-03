@@ -1,3 +1,5 @@
+saveInterval: 30
+opsGetBounties: false
 PVP:
   enabled: true
   startingBounty: 10
