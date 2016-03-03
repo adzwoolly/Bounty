@@ -28,7 +28,7 @@ public class MyListener implements Listener{
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e){
-		Player dead = e.getEntity();
+		Player dead = e.getEntity().getPlayer();
 		Player killer = dead.getKiller();
 		if(killer != null){
 			int bounty = bounties.getBounty(e.getEntity().getUniqueId());

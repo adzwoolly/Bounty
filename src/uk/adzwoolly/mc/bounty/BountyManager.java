@@ -59,12 +59,16 @@ public class BountyManager extends BukkitRunnable{
 			if(bounty != null){
 				int adminBountyValue = bounty.getBounty("admin");
 				if(adminBountyValue != 0){
+					Bukkit.broadcastMessage("Oh, wait.  I shouldn't be here...");
 					economy.depositPlayer(killer, adminBountyValue);
 				}
 				//I wanted to reuse the above in variable but, I figured using a new one would be much easier to understand
 				int normalBountyValue = bounty.getTotalBounty() - adminBountyValue;
 				if(normalBountyValue != 0){
-					economy.withdrawPlayer(dead, normalBountyValue);
+					Bukkit.broadcastMessage("Trying to take a normal (non-admin) bounty of £" + normalBountyValue);
+					if(economy.withdrawPlayer(dead, normalBountyValue).transactionSuccess()){
+						Bukkit.broadcastMessage("Transaction successful!");
+					}
 					economy.depositPlayer(killer, normalBountyValue);
 				}
 				bounties.remove(dead.getUniqueId());
