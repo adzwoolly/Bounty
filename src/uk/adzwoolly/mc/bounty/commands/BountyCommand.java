@@ -55,7 +55,7 @@ public class BountyCommand implements CommandExecutor{
 							if(target.isOnline()){
 								if(hunter.getInventory().contains(Material.COMPASS)){
 									@SuppressWarnings("unused")
-									BukkitTask task =  new Compass(hunter, target).runTaskTimer(plugin, 0, 20*60);
+									BukkitTask task =  new Compass(hunter, target, bounties).runTaskTimer(plugin, 0, 20*60);
 									
 									hunter.sendMessage(Bounty.msgPrefix + "Your compass now points to " + target.getName());
 									hunter.sendMessage(Bounty.msgPrefix + "It will update every minute");
