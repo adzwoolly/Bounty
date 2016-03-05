@@ -174,15 +174,18 @@ public class BountyManager extends BukkitRunnable{
 	
 	private abstract static class FileInterface {
 		
+		static boolean failedLoad = false;
+		
 		private static int getIntFromString(String text){
 			try{
 				return Integer.parseInt(text);
 			} catch(NumberFormatException e){
+				failedLoad = true;
 				return 0;
 			}
 		}
 		
-		protected static void loadBounties(HashMap<UUID, BountyData> bounties){
+		private static void loadBounties(HashMap<UUID, BountyData> bounties){
 			
 			String fileName = "plugins/Bounty/bountyRecords.txt";
 			
@@ -206,23 +209,20 @@ public class BountyManager extends BukkitRunnable{
 					//loc {locWorld		locX	locY	locZ}
 					String[] loc = saveData[saveData.length - 1].split(",");
 					
-					try{
-						
-					} catch(NumberFormatException e){
-						
-					}
-					
-					
-					Location location = new Location(Bukkit.getWorld(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3]));
+					Location location = new Location(Bukkit.getWorld(loc[0]), getIntFromString(loc[1]), getIntFromString(loc[2]), getIntFromString(loc[3]));
 					//Create a BountyData object
-					BountyData bountyData = new BountyData(bounty[0],Integer.parseInt(bounty[1]), location);
+					BountyData bountyData = new BountyData(bounty[0],getIntFromString(bounty[1]), location);
 					if(saveData.length > 3){
 						for(int i = 2; i < saveData.length - 1; i++){
 							bounty = saveData[i].split(",");
-							bountyData.setBountyData(bounty[0], Integer.parseInt(bounty[1]), location);
+							bountyData.setBountyData(bounty[0], getIntFromString(bounty[1]), location);
 						}
 					}
-					bounties.put(UUID.fromString(saveData[0]), bountyData);
+					if(failedLoad){
+						Bukkit.getLogger().severe("A record is corrupt, and was unable to be loaded.");
+					} else{
+						bounties.put(UUID.fromString(saveData[0]), bountyData);
+					}
 				}
 				
 				// Always close files.
@@ -238,7 +238,7 @@ public class BountyManager extends BukkitRunnable{
 			}
 		}
 		
-		protected static void saveBounties(HashMap<UUID, BountyData> bounties){
+		private static void saveBounties(HashMap<UUID, BountyData> bounties){
 			// The name of the file to open.
 			String fileName = "plugins/Bounty/bountyRecords.txt";
 			
