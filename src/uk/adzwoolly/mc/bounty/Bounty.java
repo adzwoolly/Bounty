@@ -27,6 +27,7 @@ public class Bounty extends JavaPlugin{
 		
 		//register listener and commands
 		getServer().getPluginManager().registerEvents(new MyListener(this, bountyManager), this);
+		getServer().getPluginManager().registerEvents(bountyManager, this);
 		registerCommands();
 		
 		//Setup economy with Vault

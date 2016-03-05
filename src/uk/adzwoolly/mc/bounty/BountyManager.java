@@ -13,6 +13,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -23,11 +26,10 @@ import static uk.adzwoolly.mc.bounty.Bounty.economy;
  * @author Adzwoolly (Adam Woollen)
  *
  */
-public class BountyManager extends BukkitRunnable{
+public class BountyManager extends BukkitRunnable implements Listener{
 	
 	Plugin plugin;
 	HashMap<UUID, BountyData> bounties = new HashMap<UUID, BountyData>();
-	//FileInterface fileInterface = new FileInterface();
 	
 	public BountyManager(Plugin plugin){
 		this.plugin = plugin;
@@ -77,13 +79,29 @@ public class BountyManager extends BukkitRunnable{
 		return false;
 	}
 	
+	/* There is an event handler separate to addBounty() so that addBounty() can still
+	* be used to add bounties when loading from file without other plugins intercepting
+	* already existing bounties and stopping them.
+	* May move this to where the event is called, so that it can run after highest
+	* priority, in case someone decides they have to have highest
+	*/
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerGetBounty(PlayerGetBountyEvent e){
+		if(!e.isCancelled()){
+			addBounty(e.getType(), e.getPlayer().getUniqueId(), e.getLocation());
+		}
+	}
+	
+	
 	/**
-	 * Increase the bounty on a player.  The amount increased is dependent on the type of bounty and how it is configured in the "config.yml" file.
+	 * Increase the bounty on a player.
+	 * The amount increased is dependent on the type of bounty and how it is configured in the "config.yml" file.
+	 * This is private so that other classes must use the event system to place bounties.
 	 * @param type The type of crime committed
 	 * @param id The UUID of the player to place a bounty on.
 	 * @param loc The location the crime was committed
 	 */
-	public void addBounty(String type, UUID id, Location loc){
+	private void addBounty(String type, UUID id, Location loc){
 		FileConfiguration config = plugin.getConfig();
 		
 		if(canGetBounty(id)){
@@ -167,7 +185,7 @@ public class BountyManager extends BukkitRunnable{
 	
 	//Autosave
 	@Override
-	public void run() {
+	public void run(){
 		saveBounties();
 		Bukkit.getLogger().info("Bounties saved.");
 	}
