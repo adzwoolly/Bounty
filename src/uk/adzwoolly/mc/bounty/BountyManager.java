@@ -166,7 +166,15 @@ public class BountyManager extends BukkitRunnable implements Listener{
 	
 	public String listBountiesAsString(){
 		StringBuilder sb = new StringBuilder();
-		bounties.forEach((key, value) -> sb.append(Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n"));
+		bounties.forEach((key, value) -> {
+			Location loc = value.getLocation();
+			if(loc != null){
+				sb.append(Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Last seen at: " + value.getLocation().getBlockX() + ", " + value.getLocation().getBlockY() + ", " + value.getLocation().getBlockZ() + ")\n");
+			} else{
+				sb.append(Bukkit.getOfflinePlayer(key).getName() + ": £" + value.getTotalBounty() + " (Location unknown)\n");
+			}
+			
+		});
 		return sb.toString();
 	}
 	
@@ -219,6 +227,8 @@ public class BountyManager extends BukkitRunnable implements Listener{
 				String line;
 				
 				while((line = bufferedReader.readLine()) != null) {
+					failedLoad = false;
+					
 					//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
 					//saveData {UUID	type,value	type,value	locWorld,locX,locY,locZ}
 					String[] saveData = line.split(";");
@@ -227,7 +237,19 @@ public class BountyManager extends BukkitRunnable implements Listener{
 					//loc {locWorld		locX	locY	locZ}
 					String[] loc = saveData[saveData.length - 1].split(",");
 					
-					Location location = new Location(Bukkit.getWorld(loc[0]), getIntFromString(loc[1]), getIntFromString(loc[2]), getIntFromString(loc[3]));
+					Location location = null;
+					
+					if(loc.length == 4){
+						try{
+							int x = Integer.parseInt(loc[1]);
+							int y = Integer.parseInt(loc[2]);
+							int z = Integer.parseInt(loc[3]);
+							location = new Location(Bukkit.getWorld(loc[0]), x, y, z);
+						} catch(NumberFormatException e){
+							
+						}
+					}
+					
 					//Create a BountyData object
 					BountyData bountyData = new BountyData(bounty[0],getIntFromString(bounty[1]), location);
 					if(saveData.length > 3){
@@ -274,7 +296,10 @@ public class BountyManager extends BukkitRunnable implements Listener{
 					try{
 						//File structure-	UUID;type,value;type,value;locWorld,locX,locY,locZ
 						Location loc = value.getLocation();
-						String locString = loc.getWorld().getName() + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
+						String locString = ",,,";
+						if(loc != null){
+							locString = loc.getWorld().getName() + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
+						}
 						bufferedWriter.write(key + ";" + value.getSaveData() + ";" + locString);
 						bufferedWriter.newLine();
 					} catch(IOException e){
