@@ -39,7 +39,7 @@ public class RMBountyCommand implements CommandExecutor{
 					return false;
 				}
 			} else{
-				sender.sendMessage(Bounty.msgPrefix + "You do not have the required permissions to run this command.");
+				sender.sendMessage(Bounty.msgPrefix + Bounty.msgNoPermission);
 			}
 			return true;
 		}

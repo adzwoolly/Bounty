@@ -45,7 +45,7 @@ public class AdminBountyCommand implements CommandExecutor{
 					return true;
 				}
 			} else{
-				sender.sendMessage(Bounty.msgPrefix + "You do not have the required permissions to run this command.");
+				sender.sendMessage(Bounty.msgPrefix + Bounty.msgNoPermission);
 			}
 		}
 		return false;

@@ -8,9 +8,15 @@ commands:
     description: Display yours and all others' bounties.  If you have a compass, it will point to the specified player.
     usage: /bounty [playername]
   rmBounty:
-    description: Remove the specified player's bounty
+    description: Remove the specified player's bounty.
     usage: /rmbounty <playername>
+    permission: bounty.admin
   adminbounty:
     description:  Add an admin bounty.  Define - admin bounty - a bounty in addition to a player's standard bounty, which when claimed takes money from the server rather than the player's account.
     usage: /adminbounty <playername> <bounty_amount> [store_player_location true/false]
+    permission: bounty.admin
+  bountyreload:
+    description:  Reload the bounty config.
+    usage: /bountyreload
+    permission: bounty.admin
 depend: [Vault]

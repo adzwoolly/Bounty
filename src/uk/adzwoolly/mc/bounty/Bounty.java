@@ -15,6 +15,7 @@ public class Bounty extends JavaPlugin{
 	
 	public static Economy economy = null;
 	public static final String msgPrefix = ChatColor.DARK_AQUA + "[Bounty] " + ChatColor.RESET;
+	public static final String msgNoPermission = "You do not have the required permissions to run this command.";
 	private int saveInterval = 30;
 	private BountyManager bountyManager;
 	
@@ -74,6 +75,7 @@ public class Bounty extends JavaPlugin{
 		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
 		getCommand("rmbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.RMBountyCommand(this, bountyManager));
 		getCommand("adminbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.AdminBountyCommand(this, bountyManager));
+		getCommand("bountyreload").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyReloadCommand(this));
 	}
 	
 	/**
