@@ -1,4 +1,4 @@
-package uk.adzwoolly.mc.bounty;
+package uk.adamwoollen.mc.bounty;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

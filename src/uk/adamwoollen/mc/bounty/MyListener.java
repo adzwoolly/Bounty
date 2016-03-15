@@ -1,4 +1,4 @@
-package uk.adzwoolly.mc.bounty;
+package uk.adamwoollen.mc.bounty;
 
 import java.util.HashMap;
 import java.util.UUID;

@@ -1,11 +1,11 @@
-package uk.adzwoolly.mc.bounty.commands;
+package uk.adamwoollen.mc.bounty.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import uk.adzwoolly.mc.bounty.Bounty;
+import uk.adamwoollen.mc.bounty.Bounty;
 
 public class BountyReloadCommand implements CommandExecutor{
 	

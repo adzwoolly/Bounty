@@ -1,4 +1,4 @@
-package uk.adzwoolly.mc.bounty.commands;
+package uk.adamwoollen.mc.bounty.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import uk.adzwoolly.mc.bounty.Bounty;
-import uk.adzwoolly.mc.bounty.BountyManager;
-import uk.adzwoolly.mc.bounty.Compass;
+import uk.adamwoollen.mc.bounty.Bounty;
+import uk.adamwoollen.mc.bounty.BountyManager;
+import uk.adamwoollen.mc.bounty.Compass;
 
 public class BountyCommand implements CommandExecutor{
 	

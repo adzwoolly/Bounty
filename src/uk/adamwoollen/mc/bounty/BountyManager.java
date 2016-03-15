@@ -1,4 +1,6 @@
-package uk.adzwoolly.mc.bounty;
+package uk.adamwoollen.mc.bounty;
+
+import static uk.adamwoollen.mc.bounty.Bounty.economy;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,8 +20,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import static uk.adzwoolly.mc.bounty.Bounty.economy;
 
 /**
  * A class to store and manage bounties on players

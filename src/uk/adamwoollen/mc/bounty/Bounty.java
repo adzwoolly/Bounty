@@ -1,4 +1,4 @@
-package uk.adzwoolly.mc.bounty;
+package uk.adamwoollen.mc.bounty;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,10 +72,10 @@ public class Bounty extends JavaPlugin{
 	 * @author Adzwoolly (Adam Woollen)
 	 */
 	private void registerCommands(){
-		getCommand("bounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyCommand(this, bountyManager));
-		getCommand("rmbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.RMBountyCommand(this, bountyManager));
-		getCommand("adminbounty").setExecutor(new uk.adzwoolly.mc.bounty.commands.AdminBountyCommand(this, bountyManager));
-		getCommand("bountyreload").setExecutor(new uk.adzwoolly.mc.bounty.commands.BountyReloadCommand(this));
+		getCommand("bounty").setExecutor(new uk.adamwoollen.mc.bounty.commands.BountyCommand(this, bountyManager));
+		getCommand("rmbounty").setExecutor(new uk.adamwoollen.mc.bounty.commands.RMBountyCommand(this, bountyManager));
+		getCommand("adminbounty").setExecutor(new uk.adamwoollen.mc.bounty.commands.AdminBountyCommand(this, bountyManager));
+		getCommand("bountyreload").setExecutor(new uk.adamwoollen.mc.bounty.commands.BountyReloadCommand(this));
 	}
 	
 	/**
