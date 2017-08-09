@@ -1,7 +1,7 @@
 name: Bounty
 description: Places bounties on players who kill other players
 author: Adzwoolly (Adam Woollen)
-main: uk.adzwoolly.mc.bounty.Bounty
+main: uk.adamwoollen.mc.bounty.Bounty
 version: 1.0
 commands:
   Bounty:
