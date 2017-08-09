@@ -1,4 +1,4 @@
-name := "Project Template"
+name := "Bounty"
 
 version := "0.0.0"
 
